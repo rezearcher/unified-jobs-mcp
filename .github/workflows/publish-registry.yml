@@ -1,0 +1,42 @@
+name: publish-registry
+
+# Keep the MCP Registry listing in sync with the shipped server.
+# The namespace io.github.rezearcher/* is owned by this repo's owner, so the
+# registry authenticates us via GitHub Actions OIDC — no stored secret, no
+# interactive device-flow login, no human in the loop. Edit server.json and
+# push; the live discovery surface updates itself.
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - server.json
+      - .github/workflows/publish-registry.yml
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # required for github-oidc auth to the registry
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install mcp-publisher
+        run: |
+          set -euo pipefail
+          curl -fsSL -o mcp-publisher.tar.gz \
+            "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz"
+          tar xzf mcp-publisher.tar.gz mcp-publisher
+          chmod +x mcp-publisher
+          ./mcp-publisher --help >/dev/null
+
+      - name: Validate server.json
+        run: ./mcp-publisher validate
+
+      - name: Authenticate via GitHub OIDC
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish to MCP Registry
+        run: ./mcp-publisher publish

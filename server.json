@@ -1,0 +1,12 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.rezearcher/unified-jobs-mcp",
+  "title": "Unified Jobs MCP Server",
+  "description": "Cross-source deduplicated jobs feed: merge a role across ATS, LinkedIn & HN into one record.",
+  "version": "0.1.0",
+  "websiteUrl": "https://github.com/rezearcher/unified-jobs-mcp",
+  "repository": {
+    "url": "https://github.com/rezearcher/unified-jobs-mcp",
+    "source": "github"
+  }
+}

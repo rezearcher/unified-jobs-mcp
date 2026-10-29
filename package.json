@@ -1,0 +1,45 @@
+{
+  "name": "greyridge-unified-jobs-mcp",
+  "version": "0.1.0",
+  "description": "Zero-dependency MCP server: cross-source deduplicated job feed merging 7 ATS platforms, the LinkedIn public guest search, and the Hacker News \"Who is hiring?\" thread into one canonical record per role. No API key, no account.",
+  "type": "module",
+  "bin": {
+    "greyridge-unified-jobs-mcp": "server.mjs"
+  },
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node test/roundtrip.mjs"
+  },
+  "files": [
+    "server.mjs",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "modelcontextprotocol",
+    "mcp-server",
+    "jobs",
+    "job-search",
+    "deduplication",
+    "ats",
+    "greenhouse",
+    "lever",
+    "ashby",
+    "linkedin",
+    "hacker-news",
+    "whoishiring",
+    "recruiting",
+    "hiring",
+    "claude",
+    "cursor",
+    "ai-agent"
+  ],
+  "license": "MIT"
+}

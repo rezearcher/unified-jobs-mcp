@@ -1,0 +1,12 @@
+# Smithery deployment manifest — local stdio MCP server, zero config, no secrets.
+# https://smithery.ai/docs/config
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties: {}
+    required: []
+    additionalProperties: false
+  commandFunction: |-
+    (config) => ({ command: "node", args: ["server.mjs"] })
+  exampleConfig: {}

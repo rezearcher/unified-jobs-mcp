@@ -1,0 +1,49 @@
+name: smoke
+
+# Live canary: a real MCP client handshake + a live cross-source pull on every push
+# and daily. The ATS + HN families are keyless and reliable from a cloud runner and
+# GATE the test; the LinkedIn guest endpoint rate-limits cloud IPs so it degrades open
+# and never trips the gate. A genuine ATS/HN shape drift fails the roundtrip and opens
+# an issue automatically — the maintenance signal, not a silent log.
+on:
+  push:
+    branches: [master, main]
+  schedule:
+    - cron: '41 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  roundtrip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: MCP client roundtrip + live cross-source data
+        id: test
+        run: node test/roundtrip.mjs
+      - name: Open maintenance issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'smoke: MCP roundtrip or live source failing';
+            const body = [
+              'The scheduled smoke test failed — an MCP roundtrip assertion or a live gating source (ATS / HN) did not pass.',
+              '',
+              `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              '',
+              'Likely an ATS JSON shape drift, an empty canary board, or an HN "Who is hiring?" header-convention change. Check src/sources/ats/adapters.js or src/sources/hn/parse.js.',
+            ].join('\n');
+            const { data: existing } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo, state: 'open', labels: 'smoke',
+            });
+            if (existing.some((i) => i.title === title)) return;
+            await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo, title, body, labels: ['smoke'],
+            });
