@@ -3,10 +3,16 @@
   "name": "io.github.rezearcher/unified-jobs-mcp",
   "title": "Unified Jobs MCP Server",
   "description": "Dedup jobs feed across ATS, LinkedIn & HN, free. Metered comp & hiring-signal depth via x402/USDC.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "websiteUrl": "https://github.com/rezearcher/unified-jobs-mcp",
   "repository": {
     "url": "https://github.com/rezearcher/unified-jobs-mcp",
     "source": "github"
-  }
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://assetfactory-jobs-x402.sigrunner.workers.dev/mcp"
+    }
+  ]
 }
