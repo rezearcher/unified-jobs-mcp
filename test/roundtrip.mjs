@@ -81,7 +81,7 @@ function parseToolJSON(res) {
   // 4. tools/list
   const list = await rpc('tools/list', {});
   const names = (list.result?.tools || []).map((t) => t.name).sort();
-  assert(JSON.stringify(names) === JSON.stringify(['list_sources', 'search_hn_hiring', 'search_unified_jobs']), 'tools/list returns 3 tools');
+  assert(JSON.stringify(names) === JSON.stringify(['get_premium_access', 'list_sources', 'search_hn_hiring', 'search_unified_jobs']), 'tools/list returns 4 tools');
   assert((list.result.tools || []).every((t) => t.inputSchema?.type === 'object'), 'every tool has an object inputSchema');
 
   // 5. list_sources (offline)
@@ -116,6 +116,14 @@ function parseToolJSON(res) {
   assert(!!hn.thread?.id && /who is hiring/i.test(hn.thread?.title || ''), `resolved current HN thread (${hn.thread?.title || '?'})`);
   const hj = (hn.jobs || [])[0] || {};
   assert(!!hj.title && !!hj.company && !!hj.url && hj.source_platform === 'hn', 'live HN post has title+company+url+source_platform=hn');
+
+  // 8b. get_premium_access (offline) advertises the metered x402 depth endpoints
+  const prem = parseToolJSON(await rpc('tools/call', { name: 'get_premium_access', arguments: {} }));
+  assert(/sigrunner\.workers\.dev/.test(prem.base_url || ''), 'get_premium_access returns the rail base_url');
+  assert(prem.payment?.network === 'eip155:8453' && prem.payment?.asset === 'USDC', 'get_premium_access states x402 network + asset (Base/USDC)');
+  const paths = (prem.endpoints || []).map((e) => e.url);
+  assert(paths.some((u) => /\/jobs\/comp$/.test(u)) && paths.some((u) => /\/hiring\/signal$/.test(u)), 'get_premium_access lists the comp + hiring-signal endpoints');
+  assert((prem.endpoints || []).every((e) => typeof e.price_usd === 'number' && e.price_usd > 0), 'every premium endpoint carries a positive USD price');
 
   // 9. error path: unknown method -> JSON-RPC -32601
   const bad = await rpc('does/not/exist', {});

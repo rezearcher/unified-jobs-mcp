@@ -1,6 +1,6 @@
 {
   "name": "greyridge-unified-jobs-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Zero-dependency MCP server: cross-source deduplicated job feed merging 7 ATS platforms, the LinkedIn public guest search, and the Hacker News \"Who is hiring?\" thread into one canonical record per role. No API key, no account.",
   "type": "module",
   "bin": {

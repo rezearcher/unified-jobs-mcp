@@ -78,6 +78,14 @@ free-text post header is parsed into structured fields. Optional `query` / `remo
 The source families, how to address ATS companies, and exactly how the cross-source dedup behaves.
 No network call.
 
+### `get_premium_access`
+The metered depth endpoints beyond the free reads above — a normalized cross-ATS **compensation**
+layer and a per-company **hiring-intent signal** — served pay-per-call over [x402](https://x402.org)
+(USDC on Base, no account/API key; the caller's wallet pays the 402 inline, a few tenths of a cent
+per call). Returns the base URL, each endpoint's path + price + what it adds, and the payment
+handshake. No network call, no payment. Free preview first:
+`https://assetfactory-jobs-x402.sigrunner.workers.dev/jobs/preview?companies=stripe.com`.
+
 ## Sources
 
 | family | coverage | keyless |
